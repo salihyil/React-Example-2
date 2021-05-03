@@ -2,9 +2,9 @@ import React from 'react';
 
 class SearchBar extends React.Component {
 
-    state = {
+    /*state = { Burayı app.js içindeki state -> movies, searchQuery ikinci bir property yaptık.
         searchQuery: ""
-    }
+    }*/
 
     handleFormSubmit = (event) => {
         event.preventDefault(); //Formu submit edince sayfanın hep yenileme yapmasını engelledik. 
@@ -19,11 +19,11 @@ class SearchBar extends React.Component {
                     <div className="col-12">
                                {/* Burdaki value değerini dinamik hale detiricez. */}
                         <input 
-                            onChange={(event) => this.setState({searchQuery: event.target.value})} 
+                            onChange={this.props.searchMovieProp} 
                             type="text" 
                             className="form-control" 
                             placeholder="Search a movie" 
-                            value={this.state.searchQuery}
+                            //value={this.state.searchQuery}
                             />
                     </div>
                 </div>

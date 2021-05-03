@@ -39,11 +39,17 @@ class App extends React.Component { //Herşeyi App Component içine yazıyoruz.
         const newMovieList = this.state.movies.filter(
             m => m.id !== movie.id //m.id eşit olmayacak movie.id'ye
         );
-        //Burdaki yeni movie listesini yukardaki movies'e dönüştürücez.
-        this.setState({
-            movies: newMovieList
-        })
 
+        //Burdaki yeni movie listesini yukardaki movies'e dönüştürücez.
+        /*this.setState({
+            movies: newMovieList
+        })*/ //Bu şekildeki yazım önceki state durumumuz boş bir array olduğunda kullanımı tercih edilir.
+
+        //İçeriğimiz boş bie array değil var olan filmler üzerinden güncelliyoruz kendi yeni listemizi
+        //bunun için var olan state'i parametre olarak alıcaz. Var olan state'i güncellicez.
+        this.setState(state => ({
+            movies: newMovieList
+        }))
     }
 
     render() {

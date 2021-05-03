@@ -1,59 +1,41 @@
-import React from 'react'; 
+import React from 'react';
 
-class MovieList extends React.Component {
+const MovieList = (props) => {
+//sadece propr özellik aldımız için fonksiyonel component kullandık.
 
+    
+    // let handleClick = (e) => {
+    //     //console.log("butona basıldı");
+    //     //console.log(e);/* event(e): eventle ilgili o anki olayla ilgili bilgileri taşır.
+    //     //Çıktı: SyntheticBaseEvent {_reactName: "onClick", _targetInst: null, type: "click", nativeEvent: MouseEvent, target: button.btn.btn-md.btn-outline-danger, …} */
+    // }
 
-
-    render() {
         return (
-            <div className="row">
-                <div className="col-lg-4">
-                    <div className="card me-4 shadow-sm">
-                        <img src="https://image.tmdb.org/t/p/w220_and_h330_face/wHa6KOJAoNTFLFtp7wguUJKSnju.jpg" className="card-img-top" alt="Sample Movie" />
-                        <div className="card-body">
-                            <h5 className="card-title">Sample Movie</h5>
-                            <p className="card-text">Sample Movie Description</p>
-                            <div className="d-flex justify-content-between align-items-center">
-                                <button type="button" className="btn btn-md btn-outline-danger">Delete</button>
-                                <h2><span className="badge badge-info">9.0</span></h2>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+            <div className="row">  
 
-                <div className="col-lg-4">
-                    <div className="card me-4 shadow-sm">
-                        <img src="https://image.tmdb.org/t/p/w220_and_h330_face/wHa6KOJAoNTFLFtp7wguUJKSnju.jpg" className="card-img-top" alt="Sample Movie" />
-                        <div className="card-body">
-                            <h5 className="card-title">Sample Movie</h5>
-                            <p className="card-text">Sample Movie Description</p>
-                            <div className="d-flex justify-content-between align-items-center">
-                                <button type="button" className="btn btn-md btn-outline-danger">Delete</button>
-                                <h2><span className="badge badge-info">9.0</span></h2>
+                {props.movies.map((movie) => ( //map fonksiyonu ile movies array'i içindeki şuan 3 eleman var onları tek tek gösteriyoruz. 
+                    //Console'da hata aldık neden? index.js:1 Warning: Each child in a list should have a unique "key" prop.
+                    //Bunuda ilerde silme işlemi yapacağimız hangisinin silineğinin anlaşılabilmesi için key={movie.id} yazdık.
+                    <div className="col-lg-4" key={movie.id}>
+                        <div className="card me-4 shadow-sm">
+                            <img src={movie.imageURL} className="card-img-top" alt="Sample Movie" />
+                            <div className="card-body">
+                                <h5 className="card-title">{movie.name}</h5>
+                                <p className="card-text">{movie.overview}</p>
+                                <div className="d-flex justify-content-between align-items-center">
+                                    <button type="button" onClick={()=> props.deleteMovieProp(movie) } className="btn btn-md btn-outline-danger">Delete</button>
+                                    {/* handleClick() şeklinde yazılmadığına dikkat return içine girince direk çalışmasın. Biz butona basınca çalışsın diye parantez içine almıyoruz. */}
+                                    <h2><span className="badge badge-info">{movie.rating}</span></h2>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
-
-                <div className="col-lg-4">
-                    <div className="card me-4 shadow-sm">
-                        <img src="https://image.tmdb.org/t/p/w220_and_h330_face/wHa6KOJAoNTFLFtp7wguUJKSnju.jpg" className="card-img-top" alt="Sample Movie" />
-                        <div className="card-body">
-                            <h5 className="card-title">Sample Movie</h5>
-                            <p className="card-text">Sample Movie Description</p>
-                            <div className="d-flex justify-content-between align-items-center">
-                                <button type="button" className="btn btn-md btn-outline-danger">Delete</button>
-                                <h2><span className="badge badge-info">9.0</span></h2>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-               
-             
+                )
+                )}
             </div>
         )
 
+    
     }
-}
 
 export default MovieList;

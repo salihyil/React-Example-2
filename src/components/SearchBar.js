@@ -1,4 +1,4 @@
-import React from 'react'; 
+import React from 'react';
 
 class SearchBar extends React.Component {
 
@@ -6,7 +6,7 @@ class SearchBar extends React.Component {
 
     render() {
         return (
-            <h1>SearchBar</h1>
+            <h1 style={{color:"red"}}>SearchBar</h1> 
         )
 
     }

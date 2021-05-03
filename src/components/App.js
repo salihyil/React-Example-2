@@ -32,16 +32,33 @@ class App extends React.Component { //Herşeyi App Component içine yazıyoruz.
         ]
     }
 
+    //Delete fonksiyonu App.js içine yazıyoruz. Arrow func yaptık.
+    //Bir filmi sildikten sonra kalan filmler için yeni bir liste oluşturuyoruz. Bunu filter metodu kullanıcaz.
+    //Parent componentteki deleteMovie fonksiyonu child componentte aktarmanın en kolay yolu props hale getirmek.
+    deleteMovie = (movie) => {
+        const newMovieList = this.state.movies.filter(
+            m => m.id !== movie.id //m.id eşit olmayacak movie.id'ye
+        );
+        //Burdaki yeni movie listesini yukardaki movies'e dönüştürücez.
+        this.setState({
+            movies: newMovieList
+        })
+
+    }
+
     render() {
         return (
             <div className="container">
                 <div className="row">
                     <div className="col-lg-12">
-                        <SearchBar /> 
+                        <SearchBar />
                     </div>
-                </div>  
-                  
-                <MovieList />
+                </div>
+
+                <MovieList 
+                    movies={this.state.movies} // movies props yaptık. yukardaki movies'lere böyle ulaştık.
+                    deleteMovieProp={this.deleteMovie}
+                />
             </div>
         )
     }

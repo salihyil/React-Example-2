@@ -7,51 +7,22 @@ import MovieList from './MovieList';
 class App extends React.Component { //Herşeyi App Component içine yazıyoruz.
 
     state = {// state bir objedir ve İçerisinde yazılanda movies: property şeklinde gelir.
-        movies: [ //Bu verileri gerçekte api veya veritabanından alıyoruz. Ders olduğu için şimdilik static veri alıcaz.
-            {
-                "id": 1, //"" içinde yazılmak zorunlu id,name,ratinglerin kural
-                "name": "The Flash",
-                "rating": 8.3,
-                "overview": "This is a wider card with supporting text below as a natural lead-in to additional content.",
-                "imageURL": "https://image.tmdb.org/t/p/w220_and_h330_face/wHa6KOJAoNTFLFtp7wguUJKSnju.jpg"
-            },
-            {
-                "id": 2,
-                "name": "Interstellar",
-                "rating": 6.8,
-                "overview": "This is a wider card with supporting text below as a natural lead-in to additional content.",
-                "imageURL": "https://image.tmdb.org/t/p/w220_and_h330_face/gEU2QniE6E77NI6lCU6MxlNBvIx.jpg"
-            },
-            {
-                "id": 3,
-                "name": "Arrow",
-                "rating": 7.9,
-                "overview": "This is a wider card with supporting text below as a natural lead-in to additional content.",
-                "imageURL": "https://image.tmdb.org/t/p/w220_and_h330_face/gKG5QGz5Ngf8fgWpBsWtlg5L2SF.jpg"
-            },{
-                "id": 4,
-                "name": "Rogue",
-                "rating": 7.4,
-                "overview": "This is a wider card with supporting text below as a natural lead-in to additional content.",
-                "imageURL": "https://image.tmdb.org/t/p/w220_and_h330_face/uOw5JD8IlD546feZ6oxbIjvN66P.jpg"
-            },
-            {
-                "id": 5,
-                "name": "Project Power",
-                "rating": 6.7,
-                "overview": "This is a wider card with supporting text below as a natural lead-in to additional content.",
-                "imageURL": "https://image.tmdb.org/t/p/w220_and_h330_face/TnOeov4w0sTtV2gqICqIxVi74V.jpg"
-            },
-            {
-                "id": 6,
-                "name": "Superman",
-                "rating": 7.6,
-                "overview": "This is a wider card with supporting text below as a natural lead-in to additional content.",
-                "imageURL": "https://image.tmdb.org/t/p/w220_and_h330_face/6Bbq8qQWpoApLZYWFFAuZ1r2gFw.jpg"
-            }
-        ],
+        movies: [ ],//Static alma kısmı bitti fetch fonksiyonu kullanıcaz componentDidMount() içinde
+
         searchQuery: ""
     }
+
+    async componentDidMount() {
+        const baseUrl= "http://localhost:3002/movies";
+        const responce = await fetch(baseUrl); //fetch: asenkron olarak network sorguları yapmamızı sağlayan bir js fonksiyonudur. 
+        //componentDidMount basına async ekliyoruz. fetch ve responce basına await ekliyoruz. fetch Promise tabanlıdır.
+        console.log(responce); // çıktısı Response {type: "cors", url: "http://localhost:3002/movies", redirected: false, status: 200, ok: true, …}
+        const data = await responce.json(); //(6) [{…}, {…}, {…}, {…}, {…}, {…}]  0: {id: 1, name: "The Flash", rating: 8.3, overview: "This is a wider card w ... 
+        console.log(data); 
+        //bu datayı state içindeki movies nasıl aktarabilir udpate edebilir? setState ile
+        this.setState({movies: data});
+    }
+
 
     //Delete fonksiyonu App.js içine yazıyoruz. Arrow func yaptık.
     //Bir filmi sildikten sonra kalan filmler için yeni bir liste oluşturuyoruz. Bunu filter metodu kullanıcaz.

@@ -2,6 +2,7 @@ import React from 'react'; //App react component olduğu için bu kodun yazılma
 import SearchBar from './SearchBar';
 import MovieList from './MovieList';
 import axios from 'axios';
+require('dotenv').config();
 
 //İlerde bu film sayısı -değişebileceği- için bu movies state içerisine almamız gerekir.
 
@@ -47,7 +48,7 @@ class App extends React.Component { //Herşeyi App Component içine yazıyoruz.
     //senkron: aynı nada çalşabilen
     //asenkron: aynı nada çalşamayan
     
-    // axios metodu-kütüphanesi ile get request -start  (http request) googledan npm axios indir.
+    /*// axios metodu-kütüphanesi ile get request -start  (http request) googledan npm axios indir.
     async componentDidMount() {
         const response = await axios.get("http://localhost:3002/movies")
         console.log(response); //object içinde data: var ordan (6) [{…}, {…}, {…}, {…}, {…}, {…}] ulaşıyoruz.
@@ -70,8 +71,35 @@ class App extends React.Component { //Herşeyi App Component içine yazıyoruz.
             movies: newMovieList
         }))
     }
-    //axios ile delete request -end
+    //axios ile delete request -end*/
    
+    //Gerçek API themoviedb.org ile çalışmak -start
+    // axios metodu-kütüphanesi ile get request-end
+    async componentDidMount() {
+        //npm i dotenv ihtiyacımız var. api_key'i çevre değişkeni olarak tanımlıcaz. https://www.npmjs.com/package/dotenv
+        //const response = await axios.get(`https://api.themoviedb.org/3/movie/popular?api_key=${process.env.REACT_APP_API_KEY}&language=en-US&page=1`)
+        const response = await axios.get(`https://api.themoviedb.org/3/list/7094722?api_key=${process.env.REACT_APP_API_KEY}&language=en-US`)
+        console.log(response.data.items);
+        this.setState({movies: response.data.items});
+    }
+    // axios metodu-kütüphanesi ile get request-end
+
+    //axios ile delete request -start
+    deleteMovie = async (movie) => {
+        
+        axios.delete()
+        await axios.post(`https://api.themoviedb.org/3/list/7094722/remove_item?media_id=${movie.id}&session_id=${process.env.REACT_APP_SESSION_ID}&api_key=${process.env.REACT_APP_API_KEY}`)
+        // post remove list https://developers.themoviedb.org/3/lists/remove-movie
+        const newMovieList = this.state.movies.filter(
+            m => m.id !== movie.id 
+        );
+        this.setState(state => ({
+            movies: newMovieList
+        }))
+    }
+    //axios ile delete request -end
+    //Gerçek API themoviedb.org ile çalışmak -end
+
 
     //Delete fonksiyonu App.js içine yazıyoruz. Arrow func yaptık.
     //Bir filmi sildikten sonra kalan filmler için yeni bir liste oluşturuyoruz. Bunu filter metodu kullanıcaz.
@@ -106,7 +134,7 @@ class App extends React.Component { //Herşeyi App Component içine yazıyoruz.
         let filteredMovies = this.state.movies.filter(
             (movie) => {
                 //return movie.name.toLowerCase().indexOf(this.state.searchQuery.toLowerCase()) !== -1
-                return movie.name.toLowerCase().includes(this.state.searchQuery.toLowerCase());
+                return movie.title.toLowerCase().includes(this.state.searchQuery.toLowerCase());
             }
         )
 

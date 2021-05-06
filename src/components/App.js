@@ -1,161 +1,127 @@
-import React from 'react'; //App react component olduğu için bu kodun yazılması gereklidir.
-import SearchBar from './SearchBar';
+import React from 'react';
 import MovieList from './MovieList';
+import SearchBar from './SearchBar';
+import AddMovie from './AddMovie';
 import axios from 'axios';
-require('dotenv').config();
+import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
 
-//İlerde bu film sayısı -değişebileceği- için bu movies state içerisine almamız gerekir.
+//npx json-server --watch movies.json --port 3002 json-server başlatma-start
 
-class App extends React.Component { //Herşeyi App Component içine yazıyoruz.
+class App extends React.Component {
 
-    state = {// state bir objedir ve İçerisinde yazılanda movies: property şeklinde gelir.
-        movies: [ ],//Static alma kısmı bitti fetch fonksiyonu kullanıcaz componentDidMount() içinde
+    state = {
+        movies: [],
 
         searchQuery: ""
     }
 
-    /* FETCH ile yapılan GET request 
+/*     async componentDidMount() {
+        const baseURL = "http://localhost:3002/movies";
+        const response = await fetch(baseURL);
+        console.log(response)
+        const data = await response.json();
+        console.log(data)
+        this.setState({movies: data})
+    } */
+
     async componentDidMount() {
-        const baseUrl= "http://localhost:3002/movies";//fake rest api çalıştırdığımız için terminalden npx json-server --watch .\src\api\movies.json --port 3002 ile çalıştırmamız lazım.
-        const responce = await fetch(baseUrl); //fetch: asenkron olarak network sorguları yapmamızı sağlayan bir js fonksiyonudur. 
-        //componentDidMount basına async ekliyoruz. fetch ve responce basına await ekliyoruz. fetch Promise tabanlıdır.
-        console.log(responce); // çıktısı Response {type: "cors", url: "http://localhost:3002/movies", redirected: false, status: 200, ok: true, …}
-        const data = await responce.json(); //(6) [{…}, {…}, {…}, {…}, {…}, {…}]  0: {id: 1, name: "The Flash", rating: 8.3, overview: "This is a wider card w ... 
-        console.log(data); 
-        //bu datayı state içindeki movies nasıl aktarabilir udpate edebilir? setState ile
-        this.setState({movies: data}); 
+        const response = await axios.get("http://localhost:3002/movies");
+        //console.log(response);
+        this.setState({movies: response.data})
+    }
+
+
+/*     deleteMovie = (movie) => {
+        const newMovieList = this.state.movies.filter(
+            m => m.id !== movie.id
+        );
+        this.setState(state => ({
+            movies: newMovieList
+        }))
     }  */
 
-    /*
-    //FETCH API ile DELETE request -start
-    deleteMovie = async (movie) => {
-        const baseUrl = `http://localhost:3002/movies/${movie.id}`; //silme işleminin yapılcağı id /${movie.id}
-        await fetch(baseUrl, {
-            method: "DELETE" //delete request
+// FETCH API
+/*     deleteMovie =  async (movie) => {
+        const baseURL = `http://localhost:3002/movies/${movie.id}`
+        await fetch(baseURL, {
+            method: "DELETE"
         })
-        
         const newMovieList = this.state.movies.filter(
-            m => m.id !== movie.id 
+            m => m.id !== movie.id
         );
         this.setState(state => ({
             movies: newMovieList
         }))
-    }
-    //FETCH API ile silme -end */
+    }  */
 
+    // AXIOS API
+    deleteMovie =  async (movie) => {
 
-    //senkron ile asenkron nedir? 
-    //senkron: aynı nada çalşabilen
-    //asenkron: aynı nada çalşamayan
-    
-    /*// axios metodu-kütüphanesi ile get request -start  (http request) googledan npm axios indir.
-    async componentDidMount() {
-        const response = await axios.get("http://localhost:3002/movies")
-        console.log(response); //object içinde data: var ordan (6) [{…}, {…}, {…}, {…}, {…}, {…}] ulaşıyoruz.
-        this.setState({movies: response.data});
-    }
-    // axios metodu-kütüphanesi ile get request-end
-
-    //axios ile delete request -start
-    deleteMovie = async (movie) => {
-        
-        axios.delete()
-        //const baseUrl = `http://localhost:3002/movies/${movie.id}`;
-        //await axios.delete(baseUrl)
-        await axios.delete(`http://localhost:3002/movies/${movie.id}`)
-
+        axios.delete(`http://localhost:3002/movies/${movie.id}`)
         const newMovieList = this.state.movies.filter(
-            m => m.id !== movie.id 
+            m => m.id !== movie.id
         );
         this.setState(state => ({
             movies: newMovieList
         }))
-    }
-    //axios ile delete request -end*/
-   
-    //Gerçek API themoviedb.org ile çalışmak -start
-    // axios metodu-kütüphanesi ile get request-end
-    async componentDidMount() {
-        //npm i dotenv ihtiyacımız var. api_key'i çevre değişkeni olarak tanımlıcaz. https://www.npmjs.com/package/dotenv
-        //const response = await axios.get(`https://api.themoviedb.org/3/movie/popular?api_key=${process.env.REACT_APP_API_KEY}&language=en-US&page=1`)
-        const response = await axios.get(`https://api.themoviedb.org/3/list/7094722?api_key=${process.env.REACT_APP_API_KEY}&language=en-US`)
-        console.log(response.data.items);
-        this.setState({movies: response.data.items});
-    }
-    // axios metodu-kütüphanesi ile get request-end
+    } 
 
-    //axios ile delete request -start
-    deleteMovie = async (movie) => {
-        
-        axios.delete()
-        await axios.post(`https://api.themoviedb.org/3/list/7094722/remove_item?media_id=${movie.id}&session_id=${process.env.REACT_APP_SESSION_ID}&api_key=${process.env.REACT_APP_API_KEY}`)
-        // post remove list https://developers.themoviedb.org/3/lists/remove-movie
-        const newMovieList = this.state.movies.filter(
-            m => m.id !== movie.id 
-        );
-        this.setState(state => ({
-            movies: newMovieList
-        }))
-    }
-    //axios ile delete request -end
-    //Gerçek API themoviedb.org ile çalışmak -end
-
-
-    //Delete fonksiyonu App.js içine yazıyoruz. Arrow func yaptık.
-    //Bir filmi sildikten sonra kalan filmler için yeni bir liste oluşturuyoruz. Bunu filter metodu kullanıcaz.
-    //Parent componentteki deleteMovie fonksiyonu child componentte aktarmanın en kolay yolu props hale getirmek.
-
-    // deleteMovie = (movie) => {
-    //     const newMovieList = this.state.movies.filter(
-    //         m => m.id !== movie.id //m.id eşit olmayacak movie.id'ye
-    //     );
-    //     //Burdaki yeni movie listesini yukardaki movies'e dönüştürücez.
-    //     this.setState({
-    //         movies: newMovieList
-    //     }) //Bu şekildeki yazım önceki state durumumuz boş bir array olduğunda kullanımı tercih edilir.
-
-    //     //İçeriğimiz boş bie array değil var olan filmler üzerinden güncelliyoruz kendi yeni listemizi
-    //     //bunun için var olan state'i parametre olarak alıcaz. Var olan state'i güncellicez.
-    //     this.setState(state => ({
-    //         movies: newMovieList
-    //     }))
-    // }
- 
 
     searchMovie = (event) => {
-        console.log(event.target.value);
-        this.setState({searchQuery: event.target.value})// Buraya gelen değer searchQuery property'sine update etmek istiyoruz.
-             
+        //console.log(event.target.value)
+        this.setState({searchQuery: event.target.value })
     }
-
 
     render() {
 
         let filteredMovies = this.state.movies.filter(
             (movie) => {
-                //return movie.name.toLowerCase().indexOf(this.state.searchQuery.toLowerCase()) !== -1
-                return movie.title.toLowerCase().includes(this.state.searchQuery.toLowerCase());
+                return movie.name.toLowerCase().indexOf(this.state.searchQuery.toLowerCase()) !== -1
             }
         )
 
         return (
-            <div className="container">
-                <div className="row">
-                    <div className="col-lg-12">
-                        <SearchBar 
-                            searchMovieProp={this.searchMovie}
-                        />
-                    </div>
-                </div>
+            <Router>
 
-                <MovieList 
-                    movies={filteredMovies} // this.state.movies yukardaki movies'lere böyle ulaştık. Onuda sonra filteredMovies' çevirdik.
-                    deleteMovieProp={this.deleteMovie}
-                />
-            </div>
+                <div className="container">
+
+                    <Switch>
+
+                        <Route path="/" exact render={() => (  
+                        //İlk bu kısım çalışsın dedik. ve <React.fragment> kullandık jsx hatası almamak için. 
+                        //Ana div içine almak(fazladan div yazmaktansa) <React.fragment> içine yazdık ve bu sadece tek yapı haline benzettik.
+                        //exact ile http://localhost:3000/add'e girince sadece AddMovie component'indekileri görebilmemizi sağladı. 
+
+                            <React.Fragment> 
+                                <div className="row">
+                                    <div className="col-lg-12">
+                                        <SearchBar searchMovieProp={this.searchMovie} />
+                                    </div>
+                                </div>
+                                <MovieList
+                                    movies={filteredMovies}
+                                    deleteMovieProp={this.deleteMovie} 
+                                />
+                            </React.Fragment>
+                        )}>
+                        </Route>
+                    
+
+                        <Route path="/add" component={AddMovie} /> 
+                    {/*<Route path="/add"   //Üstteki kısaltılmış hali.>
+                            <AddMovie />
+                        </Route> */} 
+                    </Switch>
+                </div> 
+                
+
+            </Router>
         )
+
     }
+
 
 }
 
 export default App;
+

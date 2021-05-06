@@ -3,9 +3,9 @@ import MovieList from './MovieList';
 import SearchBar from './SearchBar';
 import AddMovie from './AddMovie';
 import axios from 'axios';
-import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
+import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 
-//npx json-server --watch movies.json --port 3002 json-server başlatma-start
+//json-server başlatma-start:  npx json-server --watch src/api/movies.json --port 3002
 
 class App extends React.Component {
 
@@ -54,7 +54,7 @@ class App extends React.Component {
         }))
     }  */
 
-    // AXIOS API
+    // AXIOS API DELETE MOVIE
     deleteMovie =  async (movie) => {
 
         axios.delete(`http://localhost:3002/movies/${movie.id}`)
@@ -66,10 +66,19 @@ class App extends React.Component {
         }))
     } 
 
-
+    //SEARCH MOVIE
     searchMovie = (event) => {
         //console.log(event.target.value)
         this.setState({searchQuery: event.target.value })
+    }
+
+    //ADD MOVIE
+    addMovie = async (movie) => {
+        await axios.post(`http://localhost:3002/movies/`, movie )
+        console.log("movie: ",movie); //çıktısı movie:  {name: "sa"}   //add movie form'da ne yazdıysan movie'ye geliyor.
+        this.setState(state => ({
+            movies: state.movies.concat([movie])
+        }))
     }
 
     render() {
@@ -95,7 +104,9 @@ class App extends React.Component {
                             <React.Fragment> 
                                 <div className="row">
                                     <div className="col-lg-12">
-                                        <SearchBar searchMovieProp={this.searchMovie} />
+                                        <SearchBar 
+                                            searchMovieProp={this.searchMovie}
+                                         />
                                     </div>
                                 </div>
                                 <MovieList
@@ -106,11 +117,17 @@ class App extends React.Component {
                         )}>
                         </Route>
                     
+                        <Route path="/add" exact render={({history}) => (
 
-                        <Route path="/add" component={AddMovie} /> 
-                    {/*<Route path="/add"   //Üstteki kısaltılmış hali.>
-                            <AddMovie />
-                        </Route> */} 
+                            <AddMovie 
+                                onAddMovie={(movie) =>{this.addMovie(movie)
+                                    history.push("/") //http://localhost:3000/add içinde Add Movie butonuna basınca ana sayfaya gitmesi için bu kod yazıldı. https://reactrouter.com/web/api/history
+                                }
+                        }
+                            />
+                        )}> 
+                        </Route>
+                            
                     </Switch>
                 </div> 
                 

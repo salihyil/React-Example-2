@@ -18,7 +18,7 @@ class SearchBar extends React.Component {
                         
                             onChange={this.props.searchMovieProp} 
                             type="text" className="form-control" 
-                            placeholder="Seach a movie" 
+                            placeholder={"Seach a movie"} 
                         />
                     </div>
                     <div className="col-2">
